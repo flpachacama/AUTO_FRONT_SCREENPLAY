@@ -23,20 +23,12 @@ import static org.hamcrest.Matchers.is;
 
 public class KudoStepDefinitions {
 
-    // -------------------------------------------------------------------------
-    // Given
-    // -------------------------------------------------------------------------
-
     @Given("the user opens SofkianOS landing page")
     public void theUserOpensSofkianOSLandingPage() {
         OnStage.theActorCalled("Sofkiano").attemptsTo(
                 OpenLandingPage.open()
         );
     }
-
-    // -------------------------------------------------------------------------
-    // When
-    // -------------------------------------------------------------------------
 
     @When("the user navigates to the Kudos form")
     public void theUserNavigatesToTheKudosForm() {
@@ -64,11 +56,6 @@ public class KudoStepDefinitions {
                 SubmitKudoWithSlider.now()
         );
     }
-
-    // -------------------------------------------------------------------------
-    // Then
-    // -------------------------------------------------------------------------
-
     @Then("the user should see a successful kudo submission message")
     public void theUserShouldSeeASuccessfulKudoSubmissionMessage() {
         Actor actor = OnStage.theActorInTheSpotlight();

@@ -4,6 +4,7 @@ import automation.ui.KudoFormUI;
 import net.serenitybdd.annotations.Step;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
+import net.serenitybdd.screenplay.Tasks;
 import net.serenitybdd.screenplay.actions.Clear;
 import net.serenitybdd.screenplay.actions.Enter;
 
@@ -11,12 +12,12 @@ public class EnterKudoMessage implements Task {
 
     private final String message;
 
-    private EnterKudoMessage(String message) {
+    public EnterKudoMessage(String message) {
         this.message = message;
     }
 
     public static EnterKudoMessage saying(String message) {
-        return new EnterKudoMessage(message);
+        return Tasks.instrumented(EnterKudoMessage.class, message);
     }
 
     @Step("{0} enters the kudo message")

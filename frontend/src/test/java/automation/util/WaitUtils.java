@@ -8,29 +8,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-/**
- * Utility class providing reusable explicit-wait helpers.
- *
- * Centralising wait logic here means Tasks and Questions never need to
- * instantiate {@link WebDriverWait} directly — they call a single,
- * descriptively-named method instead.
- */
 public final class WaitUtils {
 
-    private WaitUtils() {
-        // Utility class — no instantiation
-    }
+    private WaitUtils() {}
 
-    /**
-     * Waits up to {@code timeoutSeconds} for the element identified by
-     * {@code locator} to become visible.
-     *
-     * @param driver         the active WebDriver session
-     * @param locator        the element locator
-     * @param timeoutSeconds maximum time to wait
-     * @return {@code true} if the element became visible; {@code false} if
-     *         the timeout elapsed without it appearing
-     */
     public static boolean isElementVisible(WebDriver driver, By locator, int timeoutSeconds) {
         try {
             new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
@@ -41,16 +22,7 @@ public final class WaitUtils {
         }
     }
 
-    /**
-     * Waits up to {@code timeoutSeconds} for the element identified by
-     * {@code locator} to disappear from the DOM / become invisible.
-     *
-     * @param driver         the active WebDriver session
-     * @param locator        the element locator
-     * @param timeoutSeconds maximum time to wait
-     * @return {@code true} if the element became invisible; {@code false}
-     *         on timeout
-     */
+
     public static boolean isElementInvisible(WebDriver driver, By locator, int timeoutSeconds) {
         try {
             new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
@@ -61,16 +33,6 @@ public final class WaitUtils {
         }
     }
 
-    /**
-     * Waits up to {@code timeoutSeconds} for the element identified by
-     * {@code locator} to be clickable.
-     *
-     * @param driver         the active WebDriver session
-     * @param locator        the element locator
-     * @param timeoutSeconds maximum time to wait
-     * @return {@code true} if the element became clickable; {@code false}
-     *         on timeout
-     */
     public static boolean isElementClickable(WebDriver driver, By locator, int timeoutSeconds) {
         try {
             new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))

@@ -5,16 +5,17 @@ import automation.ui.KudoFormUI;
 import net.serenitybdd.annotations.Step;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
+import net.serenitybdd.screenplay.Tasks;
 import net.serenitybdd.screenplay.waits.WaitUntil;
 
 import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.isVisible;
 
 public class SubmitKudoWithSlider implements Task {
 
-    private SubmitKudoWithSlider() {}
+    public SubmitKudoWithSlider() {}
 
     public static SubmitKudoWithSlider now() {
-        return new SubmitKudoWithSlider();
+        return Tasks.instrumented(SubmitKudoWithSlider.class);
     }
 
     @Step("{0} submits the kudo using the slider")

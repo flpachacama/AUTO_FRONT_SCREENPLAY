@@ -1,16 +1,17 @@
 package automation.tasks;
 
 import automation.util.SliderActions;
+import net.serenitybdd.core.steps.Instrumented;
 import net.serenitybdd.annotations.Step;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Interaction;
 
 public class DragSliderToEnd implements Interaction {
 
-    private DragSliderToEnd() {}
+    public DragSliderToEnd() {}
 
     public static DragSliderToEnd now() {
-        return new DragSliderToEnd();
+        return Instrumented.instanceOf(DragSliderToEnd.class).newInstance();
     }
 
     @Step("{0} drags the slider to the end to submit the kudo")

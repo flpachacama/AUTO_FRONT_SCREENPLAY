@@ -4,6 +4,7 @@ import automation.ui.KudoFormUI;
 import net.serenitybdd.annotations.Step;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
+import net.serenitybdd.screenplay.Tasks;
 import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.waits.WaitUntil;
 
@@ -11,10 +12,10 @@ import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.isVisi
 
 public class NavigateToKudosForm implements Task {
 
-    private NavigateToKudosForm() {}
+    public NavigateToKudosForm() {}
 
     public static NavigateToKudosForm now() {
-        return new NavigateToKudosForm();
+        return Tasks.instrumented(NavigateToKudosForm.class);
     }
 
     @Step("{0} navigates to the Kudos form")

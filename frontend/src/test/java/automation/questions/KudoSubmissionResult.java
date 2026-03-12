@@ -2,6 +2,7 @@ package automation.questions;
 
 import automation.util.BrowserUtils;
 import automation.util.WaitUtils;
+import net.serenitybdd.core.steps.Instrumented;
 import net.serenitybdd.annotations.Step;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Question;
@@ -13,10 +14,10 @@ public class KudoSubmissionResult implements Question<Boolean> {
             By.xpath("//*[contains(text(),'Kudo enviado')]");
     private static final int WAIT_SECONDS = 8;
 
-    private KudoSubmissionResult() {}
+    public KudoSubmissionResult() {}
 
     public static KudoSubmissionResult isVisible() {
-        return new KudoSubmissionResult();
+        return Instrumented.instanceOf(KudoSubmissionResult.class).newInstance();
     }
 
     @Step("{0} checks whether the kudo submission success message is visible")

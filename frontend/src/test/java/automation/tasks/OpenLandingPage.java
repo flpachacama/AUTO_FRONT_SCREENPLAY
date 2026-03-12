@@ -4,21 +4,15 @@ import automation.ui.KudoFormUI;
 import net.serenitybdd.annotations.Step;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
+import net.serenitybdd.screenplay.Tasks;
 import net.serenitybdd.screenplay.actions.Open;
 
-/**
- * Task: Opens the SofkianOS landing page.
- *
- * Single Responsibility: navigates the browser to the application root URL.
- * The URL is resolved against {@code webdriver.base.url} from serenity.conf
- * via the {@code @DefaultUrl("/")} annotation on {@link KudoFormUI.LandingHomePage}.
- */
 public class OpenLandingPage implements Task {
 
-    private OpenLandingPage() {}
+    public OpenLandingPage() {}
 
     public static OpenLandingPage open() {
-        return new OpenLandingPage();
+        return Tasks.instrumented(OpenLandingPage.class);
     }
 
     @Step("{0} opens the SofkianOS landing page")
