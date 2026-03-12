@@ -9,18 +9,9 @@ import net.serenitybdd.screenplay.waits.WaitUntil;
 
 import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.isVisible;
 
-/**
- * @deprecated Replaced by {@link automation.task.NavigateToKudosForm}.
- *             This class belongs to the legacy {@code automation.tasks} package.
- *             Use {@code automation.task.NavigateToKudosForm} instead.
- *
- * Task: Clicks the 'Acceder' button on the landing page and waits until
- * the Kudos form is fully visible.
- *
- * Single Responsibility: navigation from landing page → Kudos form.
- */
-@Deprecated
 public class NavigateToKudosForm implements Task {
+
+    private NavigateToKudosForm() {}
 
     public static NavigateToKudosForm now() {
         return new NavigateToKudosForm();
@@ -32,7 +23,7 @@ public class NavigateToKudosForm implements Task {
         actor.attemptsTo(
                 Click.on(KudoFormUI.LANDING_ACCESS_BUTTON),
                 WaitUntil.the(KudoFormUI.KUDOS_FORM_TITLE, isVisible())
-                         .forNoMoreThan(10).seconds()
+                        .forNoMoreThan(10).seconds()
         );
     }
 }

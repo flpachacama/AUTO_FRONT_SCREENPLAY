@@ -7,20 +7,17 @@ import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.actions.Open;
 
 /**
- * @deprecated Replaced by {@link automation.task.OpenLandingPage}.
- *             This class belongs to the legacy {@code automation.tasks} package.
- *             Use {@code automation.task.OpenLandingPage} instead.
- *
  * Task: Opens the SofkianOS landing page.
  *
  * Single Responsibility: navigates the browser to the application root URL.
  * The URL is resolved against {@code webdriver.base.url} from serenity.conf
  * via the {@code @DefaultUrl("/")} annotation on {@link KudoFormUI.LandingHomePage}.
  */
-@Deprecated
 public class OpenLandingPage implements Task {
 
-    public static OpenLandingPage now() {
+    private OpenLandingPage() {}
+
+    public static OpenLandingPage open() {
         return new OpenLandingPage();
     }
 

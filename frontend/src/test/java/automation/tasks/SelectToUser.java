@@ -7,14 +7,10 @@ import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.actions.SelectFromOptions;
 
 /**
- * @deprecated Replaced by {@link automation.task.SelectToUser}.
- *             This class belongs to the legacy {@code automation.tasks} package.
- *
  * Task: Selects the kudo recipient (To) from the dropdown.
  *
  * Single Responsibility: populates only the 'to' field.
  */
-@Deprecated
 public class SelectToUser implements Task {
 
     private final String userName;

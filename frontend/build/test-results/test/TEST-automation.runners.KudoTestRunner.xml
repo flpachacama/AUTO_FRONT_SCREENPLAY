@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="automation.runners.KudoTestRunner" tests="1" skipped="0" failures="1" errors="0" timestamp="2026-03-12T20:31:50.237Z" hostname="DESKTOP-IMNN1J9" time="1.949">
+  <properties/>
+  <testcase name="Submit a valid kudo and receive success feedback" classname="automation.runners.KudoTestRunner" time="1.539">
+    <failure message="java.lang.NullPointerException: Cannot invoke &quot;Object.getClass()&quot; because &quot;object&quot; is null" type="java.lang.NullPointerException">java.lang.NullPointerException: Cannot invoke &quot;Object.getClass()&quot; because &quot;object&quot; is null
+	at net.serenitybdd.screenplay.injectors.WebCapableActorInjector.injectDependenciesInto(WebCapableActorInjector.java:27)
+	at net.thucydides.core.steps.StepFactory.injectOtherDependenciesInto(StepFactory.java:208)
+	at net.thucydides.core.steps.StepFactory.instantiateUniqueStepLibraryFor(StepFactory.java:227)
+	at net.thucydides.core.steps.StepFactory.getUniqueStepLibraryFor(StepFactory.java:155)
+	at net.serenitybdd.core.steps.Instrumented$InstrumentedBuilder.newInstance(Instrumented.java:30)
+	at net.serenitybdd.screenplay.InstrumentedTask.instrumentedCopyOf(InstrumentedTask.java:57)
+	at net.serenitybdd.screenplay.InstrumentedTask.of(InstrumentedTask.java:27)
+	at net.serenitybdd.screenplay.Actor.attemptsTo(Actor.java:215)
+	at net.serenitybdd.screenplay.Actor.attemptsTo(Actor.java:222)
+	at automation.stepdefinitions.KudoStepDefinitions.theUserOpensSofkianOSLandingPage(KudoStepDefinitions.java:32)
+	at ✽.the user opens SofkianOS landing page(file:///C:/Users/fredd/Desktop/Freddy%20Leonel/AUTO_FRONT_SCREENPLAY/frontend/src/test/resources/features/send_kudo.feature:7)
+</failure>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

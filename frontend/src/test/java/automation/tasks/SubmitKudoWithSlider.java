@@ -1,6 +1,6 @@
 package automation.tasks;
 
-import automation.task.DragSliderToEnd;
+import automation.tasks.DragSliderToEnd;
 import automation.ui.KudoFormUI;
 import net.serenitybdd.annotations.Step;
 import net.serenitybdd.screenplay.Actor;
@@ -9,12 +9,9 @@ import net.serenitybdd.screenplay.waits.WaitUntil;
 
 import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.isVisible;
 
-/**
- * @deprecated Replaced by {@link automation.task.SubmitKudoWithSlider}.
- *             This class belongs to the legacy {@code automation.tasks} package.
- */
-@Deprecated
 public class SubmitKudoWithSlider implements Task {
+
+    private SubmitKudoWithSlider() {}
 
     public static SubmitKudoWithSlider now() {
         return new SubmitKudoWithSlider();
@@ -24,7 +21,7 @@ public class SubmitKudoWithSlider implements Task {
     @Override
     public <T extends Actor> void performAs(T actor) {
         actor.attemptsTo(
-                WaitUntil.the(KudoFormUI.SLIDER_TRACK,  isVisible()).forNoMoreThan(5).seconds(),
+                WaitUntil.the(KudoFormUI.SLIDER_TRACK, isVisible()).forNoMoreThan(5).seconds(),
                 WaitUntil.the(KudoFormUI.SLIDER_HANDLE, isVisible()).forNoMoreThan(5).seconds(),
                 DragSliderToEnd.now()
         );

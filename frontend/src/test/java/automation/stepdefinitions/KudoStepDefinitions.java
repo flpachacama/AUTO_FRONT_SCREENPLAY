@@ -1,13 +1,13 @@
 package automation.stepdefinitions;
 
 import automation.questions.KudoSubmissionResult;
-import automation.task.EnterKudoMessage;
-import automation.task.NavigateToKudosForm;
-import automation.task.OpenLandingPage;
-import automation.task.SelectCategory;
-import automation.task.SelectFromUser;
-import automation.task.SelectToUser;
-import automation.task.SubmitKudoWithSlider;
+import automation.tasks.EnterKudoMessage;
+import automation.tasks.NavigateToKudosForm;
+import automation.tasks.OpenLandingPage;
+import automation.tasks.SelectCategory;
+import automation.tasks.SelectFromUser;
+import automation.tasks.SelectToUser;
+import automation.tasks.SubmitKudoWithSlider;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
