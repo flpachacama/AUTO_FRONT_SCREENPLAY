@@ -14,6 +14,6 @@ public class OpenApplication implements Task {
 
     @Override
     public <T extends Actor> void performAs(T actor) {
-        actor.attemptsTo(Open.url("/"));
+        actor.attemptsTo(Open.url("http://localhost:3000/"));
     }
 }

@@ -2,9 +2,11 @@ package automation.questions;
 
 import automation.ui.KudoHistoryUI;
 import net.serenitybdd.core.pages.WebElementFacade;
+import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Question;
 import net.serenitybdd.screenplay.questions.Text;
+import org.openqa.selenium.JavascriptExecutor;
 
 import java.util.Collection;
 
@@ -33,7 +35,13 @@ public class TheKudoShouldAppearInHistory implements Question<Boolean> {
 
             WebElementFacade refreshButton = KudoHistoryUI.REFRESH_BUTTON.resolveFor(actor);
             if (refreshButton.isCurrentlyVisible()) {
-                refreshButton.click();
+                JavascriptExecutor jsExecutor = (JavascriptExecutor) BrowseTheWeb.as(actor).getDriver();
+                jsExecutor.executeScript("arguments[0].scrollIntoView({block: 'center', inline: 'nearest'});", refreshButton);
+                try {
+                    refreshButton.click();
+                } catch (RuntimeException clickFailure) {
+                    jsExecutor.executeScript("arguments[0].click();", refreshButton);
+                }
             }
 
             try {
