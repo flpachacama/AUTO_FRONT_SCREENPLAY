@@ -94,86 +94,71 @@ Kudo submission form: From/To dropdowns, category (with points), message textare
 
 ---
 
-## 5. Pruebas E2E (Serenity + Cucumber)
+## 5. Automatizaciones creadas
 
-Esta sección documenta las pruebas end-to-end del frontend enfocadas en el flujo de envío de kudos.
+El frontend ya incluye tres capas de automatizacion: unitarias (Vitest), E2E UI (Playwright) y E2E BDD (Serenity + Cucumber con Screenplay).
 
-### 5.1 Tecnologias Utilizadas
+### 5.1 Unitarias e integracion de componentes (Vitest)
 
-- Java 11+
-- Serenity BDD
-- Cucumber (JUnit Platform)
-- Selenium WebDriver
-- Page Object Model (POM) + Page Factory
-- Gradle
+- Framework: `vitest` + Testing Library.
+- Script disponible en `package.json`: `npm run test` (alias `npm run test:unit`).
+- Cobertura principal: componentes React, hooks y validaciones del formulario.
 
-### 5.2 Arquitectura del Proyecto
+### 5.2 E2E UI (Playwright)
 
-Las pruebas siguen el patron **Page Object Model (POM)** combinado con **Page Factory**.  
-Cada pagina de la aplicacion tiene su propia clase que encapsula los elementos y acciones disponibles en esa vista.  
-Los elementos se declaran con anotaciones `@FindBy` (Page Factory), y cada clase extiende `PageObject` de Serenity, que provee utilidades de espera y sincronizacion sobre el driver.  
-Cucumber orquesta los escenarios en lenguaje Gherkin (Given/When/Then), y los `steps` conectan cada paso con las acciones de los page objects.
+- Escenario implementado en `tests/kudo-flow.spec.ts`.
+- Flujo cubierto: envio exitoso de kudo y regla de negocio (no auto-kudo).
+- Esta suite navega a `http://localhost:5173` (hardcoded en el spec actual).
 
-### 5.3 Estructura del Proyecto
-
-```text
-src/
-├── test/
-│   ├── java/
-│   │   └── automation/
-│   │       ├── pages/           # Page Objects (POM + Page Factory)
-│   │       │   ├── LandingPage.java
-│   │       │   └── KudoFormPage.java
-│   │       ├── runners/         # Entry point de la suite Cucumber/Serenity
-│   │       │   └── KudoRunner.java
-│   │       └── steps/           # Step definitions (mapeo Gherkin → page objects)
-│   │           └── KudoSteps.java
-│   └── resources/
-│       └── features/            # Escenarios Gherkin
-│           └── send_kudo.feature
-```
-
-- `pages/`: Page Objects que extienden `net.serenitybdd.core.pages.PageObject`. Los elementos se inyectan via `@FindBy` (Page Factory). Encapsulan localizadores y acciones de cada vista.
-- `runners/`: Clase anotada con `@RunWith(CucumberWithSerenity.class)` y `@CucumberOptions`. Es el punto de entrada de la ejecucion.
-- `steps/`: Step definitions con anotaciones `@Given`, `@When`, `@Then`. Instancian los page objects con `@Steps` y delegan las acciones.
-- `features/`: Archivos `.feature` escritos en Gherkin que describen los escenarios de negocio.
-
-### 5.4 Flujo de Prueba Automatizado
-
-1. El `KudoRunner` inicia la ejecucion de Cucumber con Serenity como runner.
-2. El escenario Gherkin define el comportamiento esperado (`send_kudo.feature`).
-3. Los `KudoSteps` traducen cada paso Gherkin a llamadas sobre los page objects.
-4. `LandingPage` abre la URL base (`http://localhost:5173`) y navega al formulario de kudos.
-5. `KudoFormPage` completa los campos (`from`, `to`, `category`, `message`) usando los elementos `@FindBy` y ejecuta el submit via slider.
-6. Se valida que el toast de confirmacion sea visible tras el envio.
-7. Serenity consolida capturas de pantalla (en fallos) y genera el reporte final.
-
-### 5.5 Requisitos para ejecutar el proyecto
-
-- Java 11 o superior
-- Gradle instalado (o usar el wrapper `gradlew`)
-- Google Chrome instalado
-- La aplicacion frontend corriendo en `http://localhost:5173`
-
-### 5.6 Ejecutar las pruebas
+Ejecucion local:
 
 ```bash
-./gradlew clean test aggregate
+npx playwright test tests/kudo-flow.spec.ts
 ```
 
-En **Windows**:
+```bat
+npx playwright test tests\kudo-flow.spec.ts
+```
+
+### 5.3 E2E BDD (Serenity + Cucumber + Selenium)
+
+Las pruebas Java estan implementadas con patron Screenplay:
+
+```text
+src/test/
+├── java/automation/
+│   ├── hooks/            # Inicializacion de actores (OnStage)
+│   ├── runners/          # KudoRunner
+│   ├── stepdefinitions/  # Given/When/Then
+│   ├── tasks/            # Acciones de negocio (abrir, navegar, enviar, ver historial)
+│   ├── questions/        # Validaciones del resultado esperado
+│   ├── ui/               # Targets y localizadores
+│   └── util/             # Datos y actores compartidos
+└── resources/features/
+	└── send_kudo.feature
+```
+
+- Runner principal: `src/test/java/automation/runners/KudoRunner.java`.
+- Feature principal: `src/test/resources/features/send_kudo.feature`.
+- Configuracion Serenity: `serenity.conf` y `serenity.properties`.
+- URL base configurada actualmente para Serenity: `http://localhost:3000`.
+
+Ejecucion local (Windows):
+
+```bat
+gradlew clean test --tests automation.runners.KudoRunner --info
+```
+
+Ejecucion completa de pruebas Java + reporte:
 
 ```bat
 gradlew clean test aggregate
 ```
 
-### 5.7 Reportes de Serenity
+### 5.4 Reportes
 
-Serenity genera reportes automaticamente despues de ejecutar las pruebas, incluyendo escenarios, pasos, capturas de pantalla y estado final.
-
-Ruta del reporte:
-
-`target/site/serenity/index.html`
+- Reporte de pruebas Gradle: `build/reports/tests/test/index.html`.
+- Reporte Serenity consolidado: `target/site/serenity/index.html`.
 
 ## 6. Prerequisites
 

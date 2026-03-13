@@ -131,6 +131,39 @@ This repository contains three main services, each with its own README:
 
 ---
 
+## Automatizaciones creadas
+
+Este repositorio ya incluye automatizaciones funcionales en el modulo `frontend` para validar calidad en distintos niveles:
+
+| Tipo | Ubicacion | Objetivo | Comando base |
+|------|-----------|----------|--------------|
+| Unitarias / componentes (Vitest) | `frontend/src/**` + `frontend/package.json` | Validar componentes, hooks y reglas de UI | `npm run test` |
+| E2E UI (Playwright) | `frontend/tests/kudo-flow.spec.ts` | Validar flujo visual de envio de kudos | `npx playwright test tests/kudo-flow.spec.ts` |
+| E2E BDD (Serenity + Cucumber + Selenium) | `frontend/src/test/java/automation/**` | Validar flujo end-to-end de envio y consulta en historial | `gradlew clean test --tests automation.runners.KudoRunner --info` |
+
+Reportes generados:
+
+- Gradle/JUnit: `frontend/build/reports/tests/test/index.html`
+- Serenity: `frontend/target/site/serenity/index.html`
+
+Ejecuciones recomendadas desde `frontend`:
+
+```bash
+npm run test
+npx playwright test tests/kudo-flow.spec.ts
+./gradlew clean test aggregate
+```
+
+```bat
+npm run test
+npx playwright test tests\kudo-flow.spec.ts
+gradlew clean test aggregate
+```
+
+> Nota: la suite Serenity usa actualmente la `base.url` configurada en `frontend/serenity.conf`.
+
+---
+
 ## AI Workflow — SofkianOS
 
 **Document:** AI Interaction Strategy  
