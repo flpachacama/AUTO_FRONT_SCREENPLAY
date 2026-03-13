@@ -171,3 +171,130 @@ Pure utility functions:
 - **React Hook Form** → `hooks/forms/` + `pages/`
 - **Zod** → `schemas/` validation schemas
 - **Zustand** → `store/slices/` + `hooks/state/`
+
+```
+
+---
+
+## 🎭 QA Automation — Serenity BDD + Screenplay Pattern
+
+The test automation layer lives under `src/test/java/automation/` and follows the
+**Screenplay Pattern** exclusively. Every class has a single, clearly-named
+responsibility; no UI locators appear inside Tasks or Step Definitions.
+
+### Package Structure
+
+```
+src/test/java/automation/
+├── hooks/                          # Cucumber lifecycle hooks
+│   └── SetupHooks.java             # @Before → OnStage.setTheStage()  |  @After → drawTheCurtain()
+│
+├── questions/                      # Screenplay Questions — read application state
+│   └── KudoSubmissionResult.java   # Answers: is the '¡Kudo enviado!' toast visible?
+│
+├── runners/                        # JUnit + Serenity entry points
+│   └── KudoTestRunner.java         # @RunWith(CucumberWithSerenity) + @CucumberOptions
+│
+├── stepdefinitions/                # Cucumber glue — thin orchestration only
+│   └── KudoStepDefinitions.java    # actor.attemptsTo(...) / actor.should(seeThat(...))
+│
+├── task/                           # Screenplay Tasks & Interactions — one action each
+│   ├── OpenLandingPage.java        # Task        → opens the app root URL
+│   ├── NavigateToKudosForm.java    # Task        → clicks 'Acceder', waits for form
+│   ├── SelectFromUser.java         # Task        → chooses sender from dropdown
+│   ├── SelectToUser.java           # Task        → chooses recipient from dropdown
+│   ├── SelectCategory.java         # Task        → picks a recognition category
+│   ├── EnterKudoMessage.java       # Task        → clears + types the message field
+│   ├── SubmitKudoWithSlider.java   # Task        → waits for slider, delegates drag
+│   └── DragSliderToEnd.java        # Interaction → executes the physical drag gesture
+│
+├── ui/                             # Serenity Target registry — all locators live here
+│   └── KudoFormUI.java             # Target constants + LandingHomePage (@DefaultUrl)
+│
+└── util/                           # Low-level reusable helpers
+    ├── BrowserUtils.java           # getDriverFor(), scrollToTop(), waitForPageLoad()
+    ├── WaitUtils.java              # isElementVisible/Invisible/Clickable() with timeout
+    └── SliderActions.java          # dragToEnd() — Selenium Actions drag + keyboard fallback
+```
+
+### Screenplay Pyramid
+
+```
+┌───────────────────────────────────────┐
+│          StepDefinitions              │  ← Orchestration only (attemptsTo / should)
+├───────────────────────────────────────┤
+│       Tasks  (business level)         │  ← One business action each (Task interface)
+├───────────────────────────────────────┤
+│   Interactions  (browser level)       │  ← One gesture each (Interaction / Performable)
+├───────────────────────────────────────┤
+│     UI Targets  +  Util helpers       │  ← Locators & raw WebDriver utilities
+└───────────────────────────────────────┘
+```
+
+### Layer Responsibilities
+
+| Layer | Class | Responsibility |
+|---|---|---|
+| **Hooks** | `SetupHooks` | Set up / tear down the Screenplay Stage per scenario |
+| **Questions** | `KudoSubmissionResult` | Read DOM state; return a typed `Boolean` answer |
+| **Runners** | `KudoTestRunner` | Wire Cucumber feature files to the glue packages |
+| **Step Definitions** | `KudoStepDefinitions` | Call `attemptsTo()` / `should(seeThat(...))` — nothing else |
+| **Tasks** | `OpenLandingPage`, `SelectFromUser`, … | Each wraps exactly one business action |
+| **Interactions** | `DragSliderToEnd` | Execute one raw browser gesture via `SliderActions` |
+| **UI** | `KudoFormUI` | Declare all `Target` constants and `@DefaultUrl` page entry points |
+| **Util** | `BrowserUtils`, `WaitUtils`, `SliderActions` | Stateless helpers — never import Task or Question classes |
+
+### Key Design Rules
+
+1. **No locators in Tasks** — all `Target` constants live exclusively in `KudoFormUI`.
+2. **No business logic in Step Definitions** — they only delegate to Tasks/Questions.
+3. **Explicit waits in Questions** — `WaitUtils.isElementVisible()` is called inside `answeredBy()`.
+4. **Factory methods on every class** — `OpenLandingPage.open()`, `SelectFromUser.named("…")`, etc.
+5. **`@Step` annotations** — every `performAs()` / `answeredBy()` method is annotated for Serenity HTML reports.
+6. **Private constructors** — all Task/Interaction/Question classes enforce instantiation via factory method only.
+
+### Data Flow — "Submit a valid kudo" Scenario
+
+```
+Feature File (send_kudo.feature)
+  │
+  ▼
+KudoTestRunner           ← @RunWith(CucumberWithSerenity)
+  │
+  ▼
+SetupHooks.setUpStage()  ← OnStage.setTheStage(new OnlineCast())
+  │
+  ▼
+KudoStepDefinitions
+  ├─ Given → actor.attemptsTo( OpenLandingPage.open() )
+  │              └─ Open.browserOn( LandingHomePage )  [webdriver.base.url + "/"]
+  │
+  ├─ When  → actor.attemptsTo( NavigateToKudosForm.now() )
+  │              └─ Click LANDING_ACCESS_BUTTON → WaitUntil KUDOS_FORM_TITLE isVisible
+  │
+  ├─ When  → actor.attemptsTo( SelectFromUser, SelectToUser, SelectCategory, EnterKudoMessage )
+  │              └─ SelectFromOptions → FROM_USER / TO_USER / CATEGORY / MESSAGE (KudoFormUI)
+  │
+  ├─ When  → actor.attemptsTo( SubmitKudoWithSlider.now() )
+  │              └─ WaitUntil SLIDER_TRACK/HANDLE → DragSliderToEnd.now()
+  │                     └─ SliderActions.dragToEnd(actor)  [Selenium Actions + keyboard fallback]
+  │
+  └─ Then  → actor.should( seeThat( KudoSubmissionResult.isVisible(), is(true) ) )
+                 └─ WaitUtils.isElementVisible( driver, "Kudo enviado", 8s )
+```
+
+### Running the Suite
+
+```bash
+# Full suite + Serenity aggregate HTML report
+./gradlew clean test aggregate
+
+# Report location after run:
+# build/reports/serenity/index.html
+```
+
+### Feature File Location
+
+```
+src/test/resources/features/send_kudo.feature
+```
