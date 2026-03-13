@@ -1,5 +1,7 @@
 package automation.util;
 
+import net.serenitybdd.screenplay.Actor;
+import net.serenitybdd.screenplay.targets.Target;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -37,6 +39,17 @@ public final class WaitUtils {
         try {
             new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
                     .until(ExpectedConditions.elementToBeClickable(locator));
+            return true;
+        } catch (TimeoutException ignored) {
+            return false;
+        }
+    }
+
+    public static boolean isTargetVisible(Actor actor, Target target, int timeoutSeconds) {
+        try {
+            WebDriver driver = BrowserUtils.getDriverFor(actor);
+            new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
+                    .until(ignored -> target.resolveFor(actor).isVisible());
             return true;
         } catch (TimeoutException ignored) {
             return false;

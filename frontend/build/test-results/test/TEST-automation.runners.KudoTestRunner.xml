@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="automation.runners.KudoTestRunner" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-03-12T20:37:30.928Z" hostname="DESKTOP-IMNN1J9" time="23.754">
-  <properties/>
-  <testcase name="Submit a valid kudo and receive success feedback" classname="automation.runners.KudoTestRunner" time="23.249"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

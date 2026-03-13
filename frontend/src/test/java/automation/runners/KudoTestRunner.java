@@ -6,9 +6,10 @@ import org.junit.runner.RunWith;
 
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(
-        features = "src/test/resources/features/send_kudo.feature",
-        glue     = { "automation.hooks", "automation.stepdefinitions" },
-        snippets = CucumberOptions.SnippetType.CAMELCASE
+        features = "classpath:features/send_kudo.feature",
+        glue = {"automation.hooks", "automation.stepdefinitions"},
+        snippets = CucumberOptions.SnippetType.CAMELCASE,
+        plugin = {"pretty"}
 )
 public class KudoTestRunner {
 }

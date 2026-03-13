@@ -1,7 +1,7 @@
 package automation.util;
 
+import automation.ui.KudoFormUI;
 import net.serenitybdd.screenplay.Actor;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,22 +12,13 @@ import java.time.Duration;
 
 public final class SliderActions {
 
-    private static final By SLIDER_TRACK_LOCATOR =
-            By.cssSelector("div[class*='cursor-pointer'][class*='rounded-full']");
-
-    private static final By SLIDER_HANDLE_LOCATOR =
-            By.cssSelector("div[class*='w-16'][class*='bg-brand']");
-
-    private static final By SUCCESS_LOCATOR =
-            By.xpath("//*[contains(text(),'Kudo enviado')]");
-
     private SliderActions() {}
 
     public static void dragToEnd(Actor actor) {
         WebDriver driver = BrowserUtils.getDriverFor(actor);
 
-        WebElement sliderTrack  = driver.findElement(SLIDER_TRACK_LOCATOR);
-        WebElement sliderHandle = driver.findElement(SLIDER_HANDLE_LOCATOR);
+        WebElement sliderTrack  = KudoFormUI.SLIDER_TRACK.resolveFor(actor);
+        WebElement sliderHandle = KudoFormUI.SLIDER_HANDLE.resolveFor(actor);
 
         int dragDistance = Math.max(
                 sliderTrack.getSize().getWidth() - sliderHandle.getSize().getWidth() - 2,
@@ -41,7 +32,7 @@ public final class SliderActions {
                 .release()
                 .perform();
 
-        if (!WaitUtils.isElementVisible(driver, SUCCESS_LOCATOR, 3)) {
+        if (!WaitUtils.isTargetVisible(actor, KudoFormUI.SUCCESS_TOAST, 3)) {
             sliderHandle.sendKeys(Keys.ARROW_RIGHT);
         }
     }
