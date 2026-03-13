@@ -137,3 +137,72 @@ mkdir -p assets
 ```
 
 Then add: `evidence-landing-hero.png`, `evidence-how-it-works.png`, `evidence-tech-stack.png`, `evidence-kudo-form.png`.
+
+---
+
+## 9. Automatizacion de pruebas con Serenity
+
+Esta automatizacion E2E valida el flujo principal de envio de kudos usando Serenity BDD + Cucumber bajo el patron Screenplay, con una estructura enfocada en mantenibilidad y lectura para equipos de desarrollo y QA.
+
+### Tecnologias Utilizadas
+
+- Java
+- Serenity BDD
+- Serenity Rest
+- Cucumber
+- Screenplay Pattern
+- Gradle o Maven
+
+### Arquitectura del Proyecto
+
+La capa de automatizacion aplica el patron **Screenplay**, donde cada actor ejecuta tareas de negocio y valida resultados mediante preguntas:
+
+- **Step Definitions**: orquestan el escenario (sin logica de UI compleja).
+- **Tasks**: encapsulan acciones del usuario (abrir pagina, seleccionar datos, enviar formulario).
+- **Questions**: verifican el estado esperado en pantalla.
+- **UI Targets**: centralizan los localizadores para evitar duplicidad.
+- **Hooks**: preparan y cierran el contexto de ejecucion por escenario.
+
+Este enfoque reduce acoplamiento, mejora la reutilizacion y hace que los escenarios sean mas legibles.
+
+### Estructura del Proyecto
+
+```text
+automation
+ ├── hooks
+ ├── questions
+ ├── runners
+ ├── stepdefinitions
+ ├── tasks
+ ├── ui
+ └── util
+```
+
+Ubicacion base en este repositorio: `src/test/java/automation/`.
+
+### Flujo de Prueba Automatizado
+
+1. El feature `src/test/resources/features/send_kudo.feature` define el escenario en Gherkin.
+2. `automation.runners.KudoTestRunner` ejecuta Cucumber con Serenity.
+3. Los hooks inicializan el Stage de Screenplay.
+4. Las Step Definitions delegan acciones a Tasks.
+5. Las Questions validan el resultado final (por ejemplo, confirmacion de envio).
+6. Serenity genera el reporte HTML consolidado.
+
+### Ejecucion de tests con Serenity
+
+Desde la carpeta `frontend/`, ejecuta:
+
+```bash
+gradle clean test aggregate
+```
+
+Para correr solo el runner principal:
+
+```bash
+gradle clean test --tests automation.runners.KudoTestRunner aggregate
+```
+
+Reporte generado en:
+
+- `build/reports/serenity/index.html`
