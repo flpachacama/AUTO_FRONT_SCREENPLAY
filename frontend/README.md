@@ -94,15 +94,96 @@ Kudo submission form: From/To dropdowns, category (with points), message textare
 
 ---
 
-## 5. Prerequisites
+## 5. Pruebas E2E (Serenity + Cucumber)
+
+Esta sección documenta las pruebas end-to-end del frontend enfocadas en el flujo de envío de kudos.
+
+### 5.1 Tecnologias Utilizadas
+
+- Java 11+
+- Serenity BDD
+- Cucumber (JUnit Platform)
+- Selenium WebDriver
+- Page Object Model (POM) + Page Factory
+- Gradle
+
+### 5.2 Arquitectura del Proyecto
+
+Las pruebas siguen el patron **Page Object Model (POM)** combinado con **Page Factory**.  
+Cada pagina de la aplicacion tiene su propia clase que encapsula los elementos y acciones disponibles en esa vista.  
+Los elementos se declaran con anotaciones `@FindBy` (Page Factory), y cada clase extiende `PageObject` de Serenity, que provee utilidades de espera y sincronizacion sobre el driver.  
+Cucumber orquesta los escenarios en lenguaje Gherkin (Given/When/Then), y los `steps` conectan cada paso con las acciones de los page objects.
+
+### 5.3 Estructura del Proyecto
+
+```text
+src/
+├── test/
+│   ├── java/
+│   │   └── automation/
+│   │       ├── pages/           # Page Objects (POM + Page Factory)
+│   │       │   ├── LandingPage.java
+│   │       │   └── KudoFormPage.java
+│   │       ├── runners/         # Entry point de la suite Cucumber/Serenity
+│   │       │   └── KudoRunner.java
+│   │       └── steps/           # Step definitions (mapeo Gherkin → page objects)
+│   │           └── KudoSteps.java
+│   └── resources/
+│       └── features/            # Escenarios Gherkin
+│           └── send_kudo.feature
+```
+
+- `pages/`: Page Objects que extienden `net.serenitybdd.core.pages.PageObject`. Los elementos se inyectan via `@FindBy` (Page Factory). Encapsulan localizadores y acciones de cada vista.
+- `runners/`: Clase anotada con `@RunWith(CucumberWithSerenity.class)` y `@CucumberOptions`. Es el punto de entrada de la ejecucion.
+- `steps/`: Step definitions con anotaciones `@Given`, `@When`, `@Then`. Instancian los page objects con `@Steps` y delegan las acciones.
+- `features/`: Archivos `.feature` escritos en Gherkin que describen los escenarios de negocio.
+
+### 5.4 Flujo de Prueba Automatizado
+
+1. El `KudoRunner` inicia la ejecucion de Cucumber con Serenity como runner.
+2. El escenario Gherkin define el comportamiento esperado (`send_kudo.feature`).
+3. Los `KudoSteps` traducen cada paso Gherkin a llamadas sobre los page objects.
+4. `LandingPage` abre la URL base (`http://localhost:5173`) y navega al formulario de kudos.
+5. `KudoFormPage` completa los campos (`from`, `to`, `category`, `message`) usando los elementos `@FindBy` y ejecuta el submit via slider.
+6. Se valida que el toast de confirmacion sea visible tras el envio.
+7. Serenity consolida capturas de pantalla (en fallos) y genera el reporte final.
+
+### 5.5 Requisitos para ejecutar el proyecto
+
+- Java 11 o superior
+- Gradle instalado (o usar el wrapper `gradlew`)
+- Google Chrome instalado
+- La aplicacion frontend corriendo en `http://localhost:5173`
+
+### 5.6 Ejecutar las pruebas
+
+```bash
+./gradlew clean test aggregate
+```
+
+En **Windows**:
+
+```bat
+gradlew clean test aggregate
+```
+
+### 5.7 Reportes de Serenity
+
+Serenity genera reportes automaticamente despues de ejecutar las pruebas, incluyendo escenarios, pasos, capturas de pantalla y estado final.
+
+Ruta del reporte:
+
+`target/site/serenity/index.html`
+
+## 6. Prerequisites
 
 - **Node.js** LTS (e.g. 20.x)
 - **npm** (or equivalent)
 - **Docker** and **Docker Compose** (for containerized run)
 
-## 6. How to Run
+## 7. How to Run
 
-### 6.1 Local (development)
+### 7.1 Local (development)
 
 ```bash
 npm install
@@ -111,7 +192,7 @@ npm run dev
 
 App runs at `http://localhost:5173`. Vite proxies `/api` to the backend (see `vite.config.ts`; default target `http://localhost:8082`).
 
-### 6.2 Docker
+### 7.2 Docker
 
 From the frontend directory:
 
@@ -122,13 +203,13 @@ docker run -p 5173:5173 --network <your-network> sofkianos-frontend
 
 Run the frontend container on the same Docker network as the Producer (e.g. `sofkianos-producer`) so Nginx can proxy `/api` to the backend.
 
-## 7. Verification
+## 8. Verification
 
 - **Landing:** Open `http://localhost:5173` — hero, about, how-it-works, tech, footer.
 - **Form:** Use “Explorar Sistema” / “Launch App” — Kudo form with From/To, Category, Message.
 - **API:** Submit a valid Kudo; expect HTTP 202 and a success toast. In DevTools: `POST /api/v1/kudos` → 202.
 
-## 8. Assets
+## 9. Assets
 
 Evidence images use the filenames referenced in section 4. Ensure the folder exists:
 
@@ -138,71 +219,6 @@ mkdir -p assets
 
 Then add: `evidence-landing-hero.png`, `evidence-how-it-works.png`, `evidence-tech-stack.png`, `evidence-kudo-form.png`.
 
----
+## 10. Autor
 
-## 9. Automatizacion de pruebas con Serenity
-
-Esta automatizacion E2E valida el flujo principal de envio de kudos usando Serenity BDD + Cucumber bajo el patron Screenplay, con una estructura enfocada en mantenibilidad y lectura para equipos de desarrollo y QA.
-
-### Tecnologias Utilizadas
-
-- Java
-- Serenity BDD
-- Serenity Rest
-- Cucumber
-- Screenplay Pattern
-- Gradle o Maven
-
-### Arquitectura del Proyecto
-
-La capa de automatizacion aplica el patron **Screenplay**, donde cada actor ejecuta tareas de negocio y valida resultados mediante preguntas:
-
-- **Step Definitions**: orquestan el escenario (sin logica de UI compleja).
-- **Tasks**: encapsulan acciones del usuario (abrir pagina, seleccionar datos, enviar formulario).
-- **Questions**: verifican el estado esperado en pantalla.
-- **UI Targets**: centralizan los localizadores para evitar duplicidad.
-- **Hooks**: preparan y cierran el contexto de ejecucion por escenario.
-
-Este enfoque reduce acoplamiento, mejora la reutilizacion y hace que los escenarios sean mas legibles.
-
-### Estructura del Proyecto
-
-```text
-automation
- ├── hooks
- ├── questions
- ├── runners
- ├── stepdefinitions
- ├── tasks
- ├── ui
- └── util
-```
-
-Ubicacion base en este repositorio: `src/test/java/automation/`.
-
-### Flujo de Prueba Automatizado
-
-1. El feature `src/test/resources/features/send_kudo.feature` define el escenario en Gherkin.
-2. `automation.runners.KudoTestRunner` ejecuta Cucumber con Serenity.
-3. Los hooks inicializan el Stage de Screenplay.
-4. Las Step Definitions delegan acciones a Tasks.
-5. Las Questions validan el resultado final (por ejemplo, confirmacion de envio).
-6. Serenity genera el reporte HTML consolidado.
-
-### Ejecucion de tests con Serenity
-
-Desde la carpeta `frontend/`, ejecuta:
-
-```bash
-gradle clean test aggregate
-```
-
-Para correr solo el runner principal:
-
-```bash
-gradle clean test --tests automation.runners.KudoTestRunner aggregate
-```
-
-Reporte generado en:
-
-- `build/reports/serenity/index.html`
+Equipo QA / Automatizacion - SofkianOS.

@@ -1,70 +1,58 @@
 package automation.stepdefinitions;
 
-import automation.questions.KudoSubmissionResult;
-import automation.tasks.EnterKudoMessage;
-import automation.tasks.NavigateToKudosForm;
-import automation.tasks.OpenLandingPage;
-import automation.tasks.SelectCategory;
-import automation.tasks.SelectFromUser;
-import automation.tasks.SelectToUser;
-import automation.tasks.SubmitKudoWithSlider;
+import automation.questions.TheKudoShouldAppearInHistory;
+import automation.tasks.FillKudoForm;
+import automation.tasks.NavigateToKudoForm;
+import automation.tasks.OpenApplication;
+import automation.tasks.OpenKudoHistory;
+import automation.tasks.SendKudo;
+import automation.tasks.ViewKudoHistory;
+import automation.util.Actors;
+import automation.util.KudoData;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.actors.OnStage;
-
-import java.util.List;
-import java.util.Map;
 
 import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
 import static org.hamcrest.Matchers.is;
 
 public class KudoStepDefinitions {
 
-    @Given("the user opens SofkianOS landing page")
-    public void theUserOpensSofkianOSLandingPage() {
-        OnStage.theActorCalled("Sofkiano").attemptsTo(
-                OpenLandingPage.open()
-        );
+    private KudoData sentKudo;
+
+    @Given("the user opens the application")
+    public void theUserOpensTheApplication() {
+        OnStage.theActorCalled(Actors.DEFAULT_USER)
+            .wasAbleTo(OpenApplication.onLandingPage());
     }
 
-    @When("the user navigates to the Kudos form")
-    public void theUserNavigatesToTheKudosForm() {
-        OnStage.theActorInTheSpotlight().attemptsTo(
-                NavigateToKudosForm.now()
-        );
-    }
-
-    @When("the user fills the kudo form with:")
-    public void theUserFillsTheKudoFormWith(DataTable dataTable) {
-        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
-        Map<String, String> data = rows.get(0);
+    @When("the user sends a kudo with:")
+    public void theUserSendsAKudoWith(DataTable dataTable) {
+        sentKudo = KudoData.from(dataTable);
 
         OnStage.theActorInTheSpotlight().attemptsTo(
-                SelectFromUser.named(data.get("from")),
-                SelectToUser.named(data.get("to")),
-                SelectCategory.named(data.get("category")),
-                EnterKudoMessage.saying(data.get("message"))
+            NavigateToKudoForm.now(),
+            FillKudoForm.withData(sentKudo),
+            SendKudo.now()
         );
     }
 
-    @When("the user submits the kudo using the slider")
-    public void theUserSubmitsTheKudoUsingTheSlider() {
-        OnStage.theActorInTheSpotlight().attemptsTo(
-                SubmitKudoWithSlider.now()
-        );
+    @When("the actor opens the kudos history")
+    public void theActorOpensTheKudosHistory() {
+        OnStage.theActorInTheSpotlight().attemptsTo(OpenKudoHistory.now());
     }
-    @Then("the user should see a successful kudo submission message")
-    public void theUserShouldSeeASuccessfulKudoSubmissionMessage() {
-        Actor actor = OnStage.theActorInTheSpotlight();
-        actor.should(
-                seeThat(
-                        "the success toast '¡Kudo enviado!'",
-                        KudoSubmissionResult.isVisible(),
-                        is(true)
-                )
+
+    @When("the actor views the kudos history")
+    public void theActorViewsTheKudosHistory() {
+        OnStage.theActorInTheSpotlight().attemptsTo(ViewKudoHistory.now());
+    }
+
+    @Then("the actor should see the sent kudo in the kudos history")
+    public void theActorShouldSeeTheSentKudoInTheKudosHistory() {
+        OnStage.theActorInTheSpotlight().should(
+            seeThat(TheKudoShouldAppearInHistory.withMessage(sentKudo.message()), is(true))
         );
     }
 }
